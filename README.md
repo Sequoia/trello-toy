@@ -7,3 +7,12 @@ You need to [get a trello token](https://trello.com/1/authorize?key=3743eec21374
 I have a board ID of mine hardcoded cuz this is a toy application.  To access one of your boards get the board ID (navigate to the board on trello and pull it from the URL) and pass it to the list command.
 
 `./tt.js --help` for more info
+
+## Progress
+- [x] get - list lists
+- [ ] get - list cards on a list
+- [ ] get - List cards in column
+- [ ] put - Update card
+- [ ] delete - Delete card
+- [ ] post - Add card
+- [ ] move files - Attach file to card

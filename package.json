@@ -1,0 +1,23 @@
+{
+  "name": "trello-toy",
+  "version": "0.0.1",
+  "description": "practice application",
+  "main": "tt.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Sequoia/trello-toy.git"
+  },
+  "author": "Sequoia McDowell",
+  "license": "GPL3",
+  "bugs": {
+    "url": "https://github.com/Sequoia/trello-toy/issues"
+  },
+  "dependencies": {
+    "commander": "~2.5.0",
+    "rc": "~0.5.4",
+    "superagent": "~0.21.0"
+  }
+}

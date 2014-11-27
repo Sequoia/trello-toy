@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var program = require('commander');
 var request = require('superagent');
+var Table = require('cli-table');
 var fs = require('fs');
 var path = require('path');
 var token = getAppToken();
@@ -14,13 +15,17 @@ program
   .command('lists [id]')
   .description('get lists for board with [id] (or default board)')
   .action(function(boardId){
-    console.log('yo');
-    var id = boardId || board;
+    var id = (typeof boardId === 'string') ? boardId : board;
     trequest('GET', 'boards/'+id+'/lists')
+      .query({cards:'open'})
       .end(function(res){
-        console.log(res.status);
-        //console.log(res);
-        console.log(JSON.stringify(res.body));
+        //Table definition (headings)
+        var t = new Table({ head: ['Column','ID', 'Open Cards'] });
+        res.body.forEach(function(col){
+          //table data
+          t.push([col.name, col.id, col.cards.length]);
+        });
+        console.log(t.toString());
       });
   });
 

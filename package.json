@@ -18,6 +18,7 @@
   "dependencies": {
     "commander": "~2.5.0",
     "rc": "~0.5.4",
-    "superagent": "~0.21.0"
+    "superagent": "~0.21.0",
+    "cli-table": "~0.3.1"
   }
 }

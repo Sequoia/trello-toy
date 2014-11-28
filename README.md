@@ -11,8 +11,7 @@ I have a board ID of mine hardcoded cuz this is a toy application.  To access on
 ## Progress
 - [x] get - list lists
 - [x] get - list cards on a list
-- [ ] get - List cards in column
-- [ ] put - Update card
+- [x] put - Update card
 - [ ] delete - Delete card
 - [ ] post - Add card
 - [ ] move files - Attach file to card

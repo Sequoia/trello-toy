@@ -8,6 +8,7 @@ var chalk = require('chalk');
 var wrap = require('wordwrap');
 var token = getAppToken();
 var util = require('util');
+var assert = require('assert');
 
 //app settings//
 var appkey = '3743eec21374665fb406cd6c2e48f42b'; //application key
@@ -16,12 +17,14 @@ var board = 'AuDVdIcE'; //hardcoded board id ¯\_(ツ)_/¯
 //program//
 program
   .command('lists [id]')
+  .usage('[id]')
   .description('get lists for board with [id] (or default board)')
   .action(function(boardId){
     var id = (typeof boardId === 'string') ? boardId : board;
     trequest('GET', 'boards/'+id+'/lists')
       .query({cards:'all'})
       .end(function(res){
+        assert(res.ok,'HTTP request failed. check board id.');
         //Table definition (headings)
         var t = new Table({ head: ['Column','ID', 'Cards'] });
         res.body.forEach(function(col){
@@ -37,12 +40,13 @@ program
   .usage('<id>')
   .description('get cards for list with <id>')
   .action(function(id){
-    trequest('GET', 'lists/'+id+'/cards')
+    assert.equal(typeof id, 'string', 'list id required for `cards <id>`');
+    trequest('GET', 'lists/'+id+'/cards/all')
       .end(function(res){
-        //console.log(util.inspect(res.body,false,null));
+        assert(res.ok,'HTTP request failed. check list id.');
         //Table definition (headings)
         var widths = [20,20,20,50]; //used for table format & word wrapping
-        var t = new Table({ head: ['Title', 'Description','Labels', 'url'], colWidths: widths });
+        var t = new Table({ head: ['Title', 'Description','Labels', 'url/id'], colWidths: widths });
         res.body.forEach(function(card){
           //table data
           t.push([
@@ -57,10 +61,43 @@ program
               bg = bg.replace('Orange','White');
               return chalk[bg](wrap(widths[2]-2)(label.name));
             }).join('\n'),
-            wrap(widths[3]-2)(card.url)
+            wrap(widths[3]-2)(card.url + '\n' + card.id)
           ]);
         });
         console.log(t.toString());
+      });
+  });
+
+program
+  .command('update <cardid> <field> <value>')
+  .usage('<cardid> <field> <value>')
+  .description('update a field on a card')
+  .on('--help',function(){
+    ['Examples:',
+    ' $ tt update 57298375 closed true',
+    ' $ tt update 57298375 labels "blue,red,green"',
+    ' $ tt update 57298375 name "New Card Name"',
+    '',
+    'Full list of valid values can be found here:',
+    'https://trello.com/docs/api/card/index.html#put-1-cards-card-id-or-shortlink']
+    .map(function(str){console.log(str);});
+  })
+  .action(function(id, field, value){
+    [].slice.call(arguments,0,3).forEach(function(arg){
+      assert.equal(typeof arg, 'string', 'arguments must be strings');
+    });
+    //have to do this to ge
+    var queryObj = {};
+    queryObj[field] = value;
+    trequest('PUT', 'cards/'+id)
+      .send(queryObj)
+      .end(function(res){
+        if(res.ok){
+          console.log(chalk.green('card ' + id + ' updated successfully'));
+        }else{
+          console.error(chalk.red('http request failed.'));
+          process.exit(res.code); //TODO change to response message
+        }
       });
   });
 

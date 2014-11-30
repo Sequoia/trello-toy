@@ -10,6 +10,7 @@ var token = getAppToken();
 var util = require('util');
 var assert = require('assert');
 var confirm = require('confirm');
+var mimetype = require('mimetype');
 var prompt = require('prompt');
 prompt.message = '';
 prompt.delimiter = '';
@@ -152,6 +153,23 @@ program
             process.exit(res.status);
           }
         });
+    });
+  });
+
+program
+  .command('attach <cardid> <filename>')
+  .description('attach an image to a card')
+  .action(function(id, filename){
+    trequest('POST', 'cards/'+id+'/attachments')
+    .attach('file', filename)
+    .end(function(res){
+      if(res.ok){
+        console.log(chalk.green('Success.'));
+      }else{
+        console.error(chalk.red('http request failed.'));
+        console.error(chalk.red(res.error.text));
+        process.exit(res.status);
+      }
     });
   });
 

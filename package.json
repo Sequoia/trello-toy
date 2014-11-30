@@ -23,6 +23,7 @@
     "chalk": "~0.5.1",
     "wordwrap": "0.0.2",
     "confirm": "~0.1.1",
-    "prompt": "~0.2.14"
+    "prompt": "~0.2.14",
+    "mimetype": "0.0.5"
   }
 }

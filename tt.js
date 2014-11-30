@@ -10,10 +10,14 @@ var token = getAppToken();
 var util = require('util');
 var assert = require('assert');
 var confirm = require('confirm');
+var prompt = require('prompt');
+prompt.message = '';
+prompt.delimiter = '';
 
 //app settings//
 var appkey = '3743eec21374665fb406cd6c2e48f42b'; //application key
 var board = 'AuDVdIcE'; //hardcoded board id ¯\_(ツ)_/¯
+var todo = '4f10a1e5102115c8280393fc'; //todo list on the board above
 
 //program//
 program
@@ -97,7 +101,8 @@ program
           console.log(chalk.green('card ' + id + ' updated successfully'));
         }else{
           console.error(chalk.red('http request failed.'));
-          process.exit(res.code); //TODO change to response message
+          console.error(chalk.red(res.error.text));
+          process.exit(res.status);
         }
       });
   });
@@ -119,10 +124,34 @@ program
               console.log(chalk.green('card ' + id + ' deleted successfully'));
             }else{
               console.error(chalk.red('http request failed.'));
-              process.exit(res.code); //TODO change to response message
+              console.error(chalk.red(res.error.text));
+              process.exit(res.status); //TODO change to response message
             }
           });
       }
+    });
+  });
+
+program
+  .command('card')
+  .description('create a card')
+  .action(function(){
+    prompt.start();
+    prompt.get(['name', 'description'], function(err, res){
+      trequest('POST', 'cards')
+        .query({idList: todo}) //TODO this should not be hardcoded
+        .query({name : res.name})
+        .query({desc : res.description})
+        .end(function(res){
+          if(res.ok){
+            console.log(chalk.green('Success. new card id: ' + res.body.id));
+            console.log(res.body.url);
+          }else{
+            console.error(chalk.red('http request failed.'));
+            console.error(chalk.red(res.error.text));
+            process.exit(res.status);
+          }
+        });
     });
   });
 

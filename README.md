@@ -13,5 +13,5 @@ I have a board ID of mine hardcoded cuz this is a toy application.  To access on
 - [x] get - list cards on a list
 - [x] put - Update card
 - [x] delete - Delete card
-- [ ] post - Add card
+- [x] post - Add card
 - [ ] move files - Attach file to card

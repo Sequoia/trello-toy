@@ -21,6 +21,7 @@
     "superagent": "~0.21.0",
     "cli-table": "~0.3.1",
     "chalk": "~0.5.1",
-    "wordwrap": "0.0.2"
+    "wordwrap": "0.0.2",
+    "confirm": "~0.1.1"
   }
 }

@@ -9,6 +9,7 @@ var wrap = require('wordwrap');
 var token = getAppToken();
 var util = require('util');
 var assert = require('assert');
+var confirm = require('confirm');
 
 //app settings//
 var appkey = '3743eec21374665fb406cd6c2e48f42b'; //application key
@@ -99,6 +100,30 @@ program
           process.exit(res.code); //TODO change to response message
         }
       });
+  });
+
+program
+  .command('delete <cardid>')
+  .usage('<cardid>')
+  .description('delete a card by ID')
+  .action(function(id){
+    confirm({
+      positive: 'y',
+      negative: 'n',
+      query: 'Are you sure you want to delete card ' + id + '? y/n'
+    },function(err,yes){
+      if(!err && yes){
+        trequest('DELETE', 'cards/'+id)
+          .end(function(res){
+            if(res.ok){
+              console.log(chalk.green('card ' + id + ' deleted successfully'));
+            }else{
+              console.error(chalk.red('http request failed.'));
+              process.exit(res.code); //TODO change to response message
+            }
+          });
+      }
+    });
   });
 
 program.parse(process.argv);

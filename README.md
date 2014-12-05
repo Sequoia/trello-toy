@@ -17,5 +17,5 @@ I have a board ID of mine hardcoded cuz this is a toy application.  To access on
 - [x] move files - Attach file to card
 
 ## Polish
-- [ ] invoke help when no args
+- [x] invoke help when no args
 - [ ] consolidate error callbacks & remove assert (in res callback)

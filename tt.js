@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 var program = require('commander');
+//Checks if the first argument is a valid command
+//outputs error message if not
+program.commandPassed = function(){
+  if(this.args === undefined || typeof this.args[0] !== 'object'){
+    console.log(chalk.red('command "%s" not found'), this.args[0]);
+    return false;
+  }
+  return true;
+};
 var request = require('superagent');
 var Table = require('cli-table');
 var fs = require('fs');
@@ -30,7 +39,6 @@ program
     trequest('GET', 'boards/'+id+'/lists')
       .query({cards:'all'})
       .end(function(res){
-        assert(res.ok,'HTTP request failed. check board id.');
         //Table definition (headings)
         var t = new Table({ head: ['Column','ID', 'Cards'] });
         res.body.forEach(function(col){
@@ -175,6 +183,9 @@ program
 
 program.parse(process.argv);
 
+//help if no command passed
+if (!program.args.length || !program.commandPassed()) program.help();
+
 ////////util/////////
 
 //returns an app token string or prompts user to set one
@@ -214,5 +225,12 @@ function getHomeDir() {
 function trequest(action,path){
   return request(action, 'https://api.trello.com/1/' + path)
     .query({'key': appkey})
-    .query({'token': token});
+    .query({'token': token})
+    .on('error',handleHttpError);
+}
+
+function handleHttpError(a,b,c){
+  console.log(a);
+  console.log(b);
+  console.log(c);
 }

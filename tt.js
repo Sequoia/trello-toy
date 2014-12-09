@@ -1,14 +1,5 @@
 #!/usr/bin/env node
 var program = require('commander');
-//Checks if the first argument is a valid command
-//outputs error message if not
-program.commandPassed = function(){
-  if(this.args === undefined || typeof this.args[0] !== 'object'){
-    console.log(chalk.red('command "%s" not found'), this.args[0]);
-    return false;
-  }
-  return true;
-};
 var request = require('superagent');
 var Table = require('cli-table');
 var fs = require('fs');
@@ -26,8 +17,8 @@ prompt.delimiter = '';
 
 //app settings//
 var appkey = '3743eec21374665fb406cd6c2e48f42b'; //application key
-var board = 'AuDVdIcE'; //hardcoded board id ¯\_(ツ)_/¯
-var todo = '4f10a1e5102115c8280393fc'; //todo list on the board above
+var board = 'AuDVdIcE'; //update this for your board TODO externalize
+var todo = '4f10a1e5102115c8280393fc'; //update this for your list TODO externalize
 
 //program//
 program
@@ -39,6 +30,7 @@ program
     trequest('GET', 'boards/'+id+'/lists')
       .query({cards:'all'})
       .end(function(res){
+        check4error(res);
         //Table definition (headings)
         var t = new Table({ head: ['Column','ID', 'Cards'] });
         res.body.forEach(function(col){
@@ -57,7 +49,7 @@ program
     assert.equal(typeof id, 'string', 'list id required for `cards <id>`');
     trequest('GET', 'lists/'+id+'/cards/all')
       .end(function(res){
-        assert(res.ok,'HTTP request failed. check list id.');
+        check4error(res);
         //Table definition (headings)
         var widths = [20,20,20,50]; //used for table format & word wrapping
         var t = new Table({ head: ['Title', 'Description','Labels', 'url/id'], colWidths: widths });
@@ -106,13 +98,8 @@ program
     trequest('PUT', 'cards/'+id)
       .send(queryObj)
       .end(function(res){
-        if(res.ok){
-          console.log(chalk.green('card ' + id + ' updated successfully'));
-        }else{
-          console.error(chalk.red('http request failed.'));
-          console.error(chalk.red(res.error.text));
-          process.exit(res.status);
-        }
+        check4error(res);
+        console.log(chalk.green('card ' + id + ' updated successfully'));
       });
   });
 
@@ -129,13 +116,8 @@ program
       if(!err && yes){
         trequest('DELETE', 'cards/'+id)
           .end(function(res){
-            if(res.ok){
-              console.log(chalk.green('card ' + id + ' deleted successfully'));
-            }else{
-              console.error(chalk.red('http request failed.'));
-              console.error(chalk.red(res.error.text));
-              process.exit(res.status); //TODO change to response message
-            }
+            check4error(res);
+            console.log(chalk.green('card ' + id + ' deleted successfully'));
           });
       }
     });
@@ -152,14 +134,9 @@ program
         .query({name : res.name})
         .query({desc : res.description})
         .end(function(res){
-          if(res.ok){
-            console.log(chalk.green('Success. new card id: ' + res.body.id));
-            console.log(res.body.url);
-          }else{
-            console.error(chalk.red('http request failed.'));
-            console.error(chalk.red(res.error.text));
-            process.exit(res.status);
-          }
+          check4error(res);
+          console.log(chalk.green('Success. new card id: ' + res.body.id));
+          console.log(res.body.url);
         });
     });
   });
@@ -171,20 +148,15 @@ program
     trequest('POST', 'cards/'+id+'/attachments')
     .attach('file', filename)
     .end(function(res){
-      if(res.ok){
-        console.log(chalk.green('Success.'));
-      }else{
-        console.error(chalk.red('http request failed.'));
-        console.error(chalk.red(res.error.text));
-        process.exit(res.status);
-      }
+      check4error(res);
+      console.log(chalk.green('Success.'));
     });
   });
 
 program.parse(process.argv);
 
 //help if no command passed
-if (!program.args.length || !program.commandPassed()) program.help();
+if (!program.args.length) program.help();
 
 ////////util/////////
 
@@ -225,12 +197,13 @@ function getHomeDir() {
 function trequest(action,path){
   return request(action, 'https://api.trello.com/1/' + path)
     .query({'key': appkey})
-    .query({'token': token})
-    .on('error',handleHttpError);
+    .query({'token': token});
 }
 
-function handleHttpError(a,b,c){
-  console.log(a);
-  console.log(b);
-  console.log(c);
+//check response for error, log & exit if error present
+function check4error(res){
+  if(res.ok) return;
+  console.error(chalk.red('http request failed.'));
+  console.error(chalk.red(res.error.text));
+  process.exit(1);
 }

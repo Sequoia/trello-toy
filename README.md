@@ -18,4 +18,4 @@ I have a board ID of mine hardcoded cuz this is a toy application.  To access on
 
 ## Polish
 - [x] invoke help when no args
-- [ ] consolidate error callbacks & remove assert (in res callback)
+- [x] consolidate error callbacks & remove assert (in res callback)

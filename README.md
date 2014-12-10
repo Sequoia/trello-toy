@@ -19,5 +19,6 @@ I have a board ID of mine hardcoded cuz this is a toy application.  You can pass
 ## Polish
 - [x] invoke help when no args
 - [x] consolidate error callbacks & remove assert (in res callback)
+- [ ] use `/me/` paths to get boards!! https://trello.com/docs/api/member/index.html#get-1-members-idmember-or-username-boards
 - [ ] allow non-hardcoded list id for card creation
 - [ ] cache preferred board/list ids

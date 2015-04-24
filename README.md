@@ -3,6 +3,11 @@
 
 You need to [get a trello token](https://trello.com/1/authorize?key=3743eec21374665fb406cd6c2e48f42b&name=Trello+Toy&expiration=never&response_type=token&scope=read,write) for my application and put it in trello-toy.token in your home directory.
 
+To use it as `tt`, after cloning:
+```sh
+npm link # from the trello-toy/ directory
+```
+
 ## Usage
 I have a board ID of mine hardcoded cuz this is a toy application.  You can pass a board id to `lists` but not (yet) pass a list id to `cards`, so **update the hardcoded board/list id to match yours for now**.
 

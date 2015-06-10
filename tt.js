@@ -168,6 +168,7 @@ program
 
     var req = trequest('GET', 'members/me/boards');
     if(args.closed) req.query({'filter':'closed'});
+    else req.query({'filter':'open'});
 
     req.end(function(res){
       check4error(res);
@@ -182,6 +183,18 @@ program
       });
       console.log(t.toString());
     }
+  });
+
+program
+  .command('close <boardid>')
+  .description('close board')
+  .action(function(boardId){
+    trequest('PUT', 'boards/'+boardId+'/closed')
+      .query({'value':true})
+      .end(function(res){
+        check4error(res);
+        console.log(chalk.green('Board closed'));
+      });
   });
 
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+//TODO break this out into per command files
 var program = require('commander');
 var request = require('superagent');
 var Table = require('cli-table');
@@ -152,6 +153,37 @@ program
       console.log(chalk.green('Success.'));
     });
   });
+
+program
+  .command('boards')
+  .option('-c, --closed','show closed boards')
+  .description('list boards (open by default)')
+  .action(function(){
+    //TODO this whole thing is screwed up there should be an easier way to get options in subcommands
+    if(program.args.length > 1){
+      console.error(chalk.red('`boards` does not take unnamed arguments'));
+      process.exit(1);
+    }
+    var args = program.args[0];
+
+    var req = trequest('GET', 'members/me/boards');
+    if(args.closed) req.query({'filter':'closed'});
+
+    req.end(function(res){
+      check4error(res);
+      showBoardsTable(res.body);
+    });
+    
+    function showBoardsTable(boards){
+      var t = new Table({ head: ['Name','ID'] });
+      boards.forEach(function(col){
+        //table data
+        t.push([col.name, col.id]);
+      });
+      console.log(t.toString());
+    }
+  });
+
 
 program.parse(process.argv);
 
